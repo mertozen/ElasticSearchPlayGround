@@ -120,3 +120,76 @@ GET /_cat/indices?v
 GET /_cat/allocation?v
 
 GET /_cat/shards?v
+
+GET /product/default/_mapping
+
+GET /product/default/1
+
+GET /product/default/_source
+
+PUT /product/default/_mapping
+{
+  "properties": {
+    "discount":{
+      "type": "integer"
+    }
+  }
+}
+
+
+PUT /product/default/_mapping
+{
+  "properties": {
+    "description":{
+      "type": "text"
+    },
+      "name": {
+        "type":"text",
+        "fields":{
+          "keyword":{
+            "type":"keyword"
+          }
+          
+        }
+        
+      },
+      "tags":{
+        "type":"text",
+        "fields":{
+          "keyword":{
+            "type":"keyword"
+          }
+        }
+        
+      }
+      
+    }
+    
+  }
+  
+GET /product/default/_mapping  
+
+PUT /product/default/_mapping
+{
+  "properties": {
+    "created":{
+      "type": "date",
+      "format": "epoch_millis"
+    }
+    
+  }
+  
+}
+
+
+PUT /product/default/_mapping
+{
+  "properties": {
+    "created":{
+      "type": "date",
+      "format": "yyyy/MM/dd HH:mm:ss||yyyy/MM/dd"
+    }
+    
+  }
+  
+}
