@@ -193,3 +193,130 @@ PUT /product/default/_mapping
   }
   
 }
+
+
+PUT /existing_analyzer_config
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "english_stop":{
+          "type": "standard",
+          "stopwords":"_english_"
+          }
+        
+      },"filter": {
+        "my_stemmer":{
+          "type":"stemmer",
+          "name":"english"
+        }
+      }
+    }
+  }
+}
+
+
+POST /existing_analyzer_config/_analyze
+{
+  "analyzer": "english_stop",
+  "text": "I'm in the mood for drinking semi-dry red wine!"
+}
+
+
+POST /existing_analyzer_config/_analyze
+{
+  "tokenizer": "standard",
+  "filter": ["my_stemmer"],
+  "text":"I'm in the mood for drinking semi-dry red wine!"
+}
+
+PUT /analyzers_test
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "english_stop":{
+          "type": "standard",
+          "stopwords":"_english_"
+          },
+          "my_analyzer": {
+            
+            "type":"custom",
+            "tokenizer": "standard",
+            "char_filter": [
+              "html_strip"
+              ],
+              "filter":[
+                "standard",
+                "lowercase",
+                "trim",
+                "my_stemmer"
+                ]
+          }
+        
+      },"filter": {
+        "my_stemmer":{
+          "type":"stemmer",
+          "name":"english"
+        }
+      }
+    }
+  }
+}
+
+
+POST /analyzers_test/_analyze
+{
+  
+  "analyzer": "my_analyzer",
+  "text": "I'm in the mood for drinking <strong>semi-dry</strong> red wine!"
+}
+
+
+PUT /analyzers_test/default/_mapping
+{
+ "properties": {
+   "description": {
+     "type": "text",
+     "analyzer": "my_analyzer"
+   },
+   "teaser":{
+     "type": "text",
+     "analyzer": "standard"
+   }
+ } 
+}
+
+POST /analyzers_test/default/1
+{"description":"drinking",
+  "teaser":"drinking"
+}
+
+GET /analyzers_test/default/_search
+{
+  "query": {
+    "term": {
+      "description": {
+        "value": "drinking"
+      }
+    }
+    
+  }
+}
+
+
+POST /analyzers_test/_close
+
+PUT /analyzers_test/_settings
+{
+  "analysis": {
+    "analyzer": {
+      "french_stop": {
+        "type": "standard",
+        "stopwords": "_french_"
+      }
+    }
+  }
+}
+
+POST /analyzers_test/_open
